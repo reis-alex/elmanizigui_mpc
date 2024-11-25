@@ -42,4 +42,5 @@ $$
 \ddot{q}
 \end{pmatrix} = f(q,u) = \begin{cases} q \\ \text{acceleration}
 \end{cases}
+\end{equation}
 $$
