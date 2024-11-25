@@ -63,7 +63,9 @@ We need only extra parameter to the optimization problem: the reference for $q_i
 
 The stage cost function, $\ell = \sum_{i=1}^N \Vert x_i-ref \Vert_Q + \Vert u \Vert_R$ is declared through ```opt.costs.stage.function```. Note that one must declare the use of the parameter _ref_ in ```opt.costs.stage.parameters```. 
 
-Finally, the (upper and lower bounds, variable-wise) constraints are declared through ```opt.constraints.states``` and ```opt.constraints.control```. There is a terminal constraint, of the type $x(N) = ref$, is imposed as a general constraint in ```opt.constraints.general.function```. For this, one must declare the use of _ref_ in ```opt.constraints.general.parameters```, declare it as an _equality_ in ```opt.constraints.general.type``` and declare that it applies only to the last element ($x(N)$) through ```opt.constraints.general.elements```.
+The (upper and lower bounds, variable-wise) constraints are declared through ```opt.constraints.states``` and ```opt.constraints.control```. There is a terminal constraint, of the type $x(N) = ref$, is imposed as a general constraint in ```opt.constraints.general.function```. For this, one must declare the use of _ref_ in ```opt.constraints.general.parameters```, declare it as an _equality_ in ```opt.constraints.general.type``` and declare that it applies only to the last element ($$x(N)$$) through ```opt.constraints.general.elements```.
+
+Finally, since it is an input to the MPC, one must declare _ref_ as an *input vector* through ```opt.input.vector```. 
 
 ```matlab
 %%
