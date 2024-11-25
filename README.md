@@ -39,6 +39,6 @@ $$
 \begin{equation}
 \begin{pmatrix}
 \dot{q} \\ \ddot{q}
-\end{pmatrix} = f(q,u) = \begin{cases} q \\ \text{robot_acceleration}
+\end{pmatrix} = f(q,u) = \begin{cases} q \\ \text{robot\_acceleration}
 \end{cases}
 $$
