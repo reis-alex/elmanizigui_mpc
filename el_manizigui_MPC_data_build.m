@@ -1,5 +1,4 @@
 clear all; close all; clc;
-addpath(genpath('C:\Users\Alex Reis\Documents\MATLAB\urdf2casadi-matlab-master'))
 import casadi.*
 
 % define state variables
@@ -16,13 +15,13 @@ torque2 = SX.sym('torque2');
 torque3 = SX.sym('torque3');
 torque4 = SX.sym('torque4');
 
-robot_path = 'C:\Users\Alex Reis\Desktop\Exoskeleton control\models\urdf\elmanizigui2.urdf';
+robot_path = fullfile(pwd, 'elmanizigui2.urdf');
 robot = importrobot(robot_path);
+robot.DataFormat = 'row';
 robot_acceleration = urdf2casadi.Dynamics.symbolicForwardDynamics(robot_path,0);
 
-robot.DataFormat = 'row';
 %%
-opt. N = 20;  
+opt. N = 50;  
 opt.dt = 0.1;
 opt.n_controls  = 4;
 opt.n_states    = 8;
@@ -64,7 +63,8 @@ tic
 toc
 
 %% Get realistic references
-load('RepetitionData.mat')
+% load('RepetitionData.mat')
+load('RotationData.mat')
 
 EFE = EFE(1:0.1/0.0005:end);
 WFE = WFE(1:0.1/0.0005:end);
@@ -143,8 +143,8 @@ hold on
 plot(rad2deg(xsimu(4,:)),'--r')
 
 figure
-plot(u(1,:),'b')
+stairs(u(1,:),'b')
 hold on
-plot(u(2,:),'r')
-plot(u(3,:),'g')
-plot(u(4,:),'k')
+stairs(u(2,:),'r')
+stairs(u(3,:),'g')
+stairs(u(4,:),'k')

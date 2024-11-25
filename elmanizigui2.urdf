@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot name="elmanizigui">
+
+
+  <link name="base_link">
+    <inertial>
+      <origin
+        rpy="0 0 0"  xyz="-0.082895 0.0067397 -0.00107"/>
+      <mass value="3.9639" />
+      <inertia
+        ixx="0.060784"
+        ixy="-2.9183E-06"
+        ixz="3.1562E-07"
+        iyy="0.0445"
+        iyz="0.00032127"
+        izz="0.061859" />
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://elmanizigui/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://elmanizigui/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <link name="LINK1">
+    <inertial>
+      <origin
+        xyz="0.10833 0.0006921 -0.059097"
+        rpy="0 0 0" />
+      <mass
+        value="0.94315" />
+      <inertia
+        ixx="0.0014393"
+        ixy="-2.5808E-06"
+        ixz="0.00040686"
+        iyy="0.0025088"
+        iyz="-3.7196E-05"
+        izz="0.0022335" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://elmanizigui/meshes/LINK1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://elmanizigui/meshes/LINK1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+
+
+  <joint name="JOINT0"
+    type="revolute">
+    <origin
+      xyz="-0.0 0 0.37892"
+      rpy="1.5573 -1.3204E-05 -1.5712" />
+    <parent
+      link="base_link" />
+    <child
+      link="LINK1" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-5"
+      upper="5"
+      effort="1000"
+      velocity="5" />
+  </joint>
+
+
+  <link name="LINK2">
+    <inertial>
+      <origin
+        xyz="-0.23051 0.00024568 -0.097065"
+        rpy="0 0 0" />
+      <mass
+        value="0.75958" />
+      <inertia
+        ixx="0.00085008"
+        ixy="-9.9149E-06"
+        ixz="-0.00061349"
+        iyy="0.0021679"
+        iyz="4.5353E-06"
+        izz="0.0016331" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://elmanizigui/meshes/LINK2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://elmanizigui/meshes/LINK2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint name="JOINT1"
+    type="revolute">
+    <origin
+      xyz="0.22332 0 -0.0"
+      rpy="-1.5631 1.5674 -1.5785" />
+    <parent
+      link="LINK1" />
+    <child
+      link="LINK2" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-5"
+      upper="5"
+      effort="1000"
+      velocity="5" />
+  </joint>
+
+
+  <link name="LINK3">
+    <inertial>
+      <origin
+        xyz="0.032265 -0.10543 -0.00098598"
+        rpy="0 0 0" />
+      <mass
+        value="0.43091" />
+      <inertia
+        ixx="0.0002474"
+        ixy="6.8989E-05"
+        ixz="2.0898E-06"
+        iyy="0.00037511"
+        iyz="-6.8349E-09"
+        izz="0.00037295" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://elmanizigui/meshes/LINK3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://elmanizigui/meshes/LINK3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <joint name="JOINT2"
+    type="revolute">
+    <origin
+      xyz="-0.40809 -8.8031E-05 0"
+      rpy="-1.8859 -1.5708 1.9206" />
+    <parent
+      link="LINK2" />
+    <child
+      link="LINK3" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-5"
+      upper="5"
+      effort="1000"
+      velocity="5" />
+  </joint>
+
+
+  <link  name="LINK4">
+    <inertial>
+      <origin
+        xyz="0.050863 -0.04761 -0.011286"
+        rpy="0 0 0" />
+      <mass
+        value="0.090111" />
+      <inertia
+        ixx="1.8318E-05"
+        ixy="-1.3652E-06"
+        ixz="5.1001E-06"
+        iyy="3.5077E-05"
+        iyz="3.0194E-07"
+        izz="4.0213E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://elmanizigui/meshes/LINK4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://elmanizigui/meshes/LINK4.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="JOINT3"
+    type="revolute">
+    <origin
+      xyz="0.080443 0 3.5E-05"
+      rpy="3.1416 -1.3323 3.1416" />
+    <parent
+      link="LINK3" />
+    <child
+      link="LINK4" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-5"
+      upper="5"
+      effort="1000"
+      velocity="5" />
+  </joint>
+</robot>
