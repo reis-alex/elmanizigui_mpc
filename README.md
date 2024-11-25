@@ -40,7 +40,16 @@ $$
 \begin{pmatrix}
 \dot{q} \\ 
 \ddot{q}
-\end{pmatrix} = f(q,u) = \begin{cases} q \\ \text{acceleration}
-\end{cases}
+\end{pmatrix} = \begin{bmatrix}
+0 & 1 \\ 0 & 0
+\end{bmatrix}\begin{pmatrix}
+q\\ 
+\dot{q}
+\end{pmatrix} +
+ \begin{bmatrix}
+0 \\ I
+ \end{bmatrix}\tau + \begin{pmatrix}
+0 \\ \text{robot\_acceleration}
+ \end{pmatrix}
 \end{equation}
 $$
