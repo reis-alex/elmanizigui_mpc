@@ -56,3 +56,54 @@ I
  \end{pmatrix}
 \end{equation}
 $$
+
+The MPC is then built as follows. We define a prediction horizon $N$ through ```opt.N```, the sampling time for integration through ```opt.dt```, the number of states and controls, respectively, through ```opt.n_states``` and ```opt.n_controls```. Then, the model (as described above), the state and control vectors are passed to ```opt.model.function```, ```opt.model.states```, and ```opt.model.controls```. The integration scheme is first-order Euler.
+
+We need only extra parameter to the optimization problem: the reference for $q_i$. This parameter is called ```Ref``` and is declared in ```opt.parameters.name```, accompanied by its dimension (the same size of the state vector) in ```opt.parameters.dim````. 
+
+The stage cost function, $\ell = \sum_{i=1}^N \Vert x_i-ref \Vert_Q + \Vert u \Vert_R$ is declared through ```opt.costs.stage.function```. Note that one must declare the use of the parameter _ref_ in ```opt.costs.stage.parameters```. 
+
+Finally, the (upper and lower bounds, variable-wise) constraints are declared through ```opt.constraints.states``` and ```opt.constraints.control```. There is a terminal constraint, of the type $x(N) = ref$, is imposed as a general constraint in ```opt.constraints.general.function```. For this, one must declare the use of _ref_ in ```opt.constraints.general.parameters```, declare it as an _equality_ in ```opt.constraints.general.type``` and declare that it applies only to the last element ($x(N)$) through ```opt.constraints.general.elements```.
+
+```matlab
+%%
+opt. N = 50;  
+opt.dt = 0.1;
+opt.n_controls  = 4;
+opt.n_states    = 8;
+opt.model.function = [[qd1;qd2;qd3;qd4]; robotacceleration([q1;q2;q3;q4],[qd1;qd2;qd3;qd4],[0 0 -10],[torque1;torque2;torque3;torque4])];
+opt.model.states   =  [q1;q2;q3;q4;qd1;qd2;qd3;qd4];
+opt.model.controls = [torque1;torque2;torque3;torque4];
+opt.continuous_model.integration = 'euler';
+
+% Define parameters
+opt.parameters.name = {'Ref','nul'};
+opt.parameters.dim = [opt.n_states, 1; 1 1];
+
+% Define costs
+Q = blkdiag(1e10*eye(opt.n_states/2),eye(opt.n_states/2));
+R = 0.001*eye(opt.n_controls);
+
+opt.costs.stage.parameters = {'Ref'};
+opt.costs.stage.function = @(x,u,varargin) (x-varargin{1})'*Q*(x-varargin{1}) + ...
+                                           (u)'*R*(u);
+                                       
+% control and state constraints
+xbound = 50;
+opt.constraints.states.upper  = xbound*ones(opt.n_states,1);
+opt.constraints.states.lower  = -xbound*ones(opt.n_states,1);
+opt.constraints.control.upper = 50*ones(4,1);
+opt.constraints.control.lower = -50*ones(4,1);
+
+opt.constraints.general.function{1} = @(x,varargin) x(:,end)-varargin{:};
+opt.constraints.general.parameters = {'Ref'};
+opt.constraints.general.type{1} = 'equality';
+opt.constraints.general.elements{1} = 'end';
+
+% Define inputs to optimization
+opt.input.vector = {'Ref'};
+
+% Define the solver and generate it
+opt.solver = 'ipopt';
+[solver,args_mpc] = build_mpc(opt);
+```
