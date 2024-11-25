@@ -109,3 +109,23 @@ opt.input.vector = {'Ref'};
 opt.solver = 'ipopt';
 [solver,args_mpc] = build_mpc(opt);
 ```
+
+Now, we use the experimental data to generate the reference trajectory. The sampling of each trajectory is $2kHz$ (period of $0.0005$s), which is too fast. I re-sample this data to $10Hz$ (period of $0.1$s) and discard the initial 500 elements (which are useless). The variable ```qtarget``` gathers all the references for $q$.
+
+```matlab
+%% Get realistic references
+% load('RepetitionData.mat')
+load('RotationData.mat')
+
+EFE = EFE(1:0.1/0.0005:end);
+WFE = WFE(1:0.1/0.0005:end);
+WPS = WPS(1:0.1/0.0005:end);
+WRU = WRU(1:0.1/0.0005:end);
+
+EFE = EFE(500:end);
+WFE = WFE(500:end);
+WPS = WPS(500:end);
+WRU = WRU(500:end);
+
+qtarget = deg2rad([EFE;WPS;WRU;WFE]);
+```
