@@ -38,7 +38,8 @@ The code above defines the corresponding states for the robot ($i=1,\dots,4)$: `
 $$
 \begin{equation}
 \begin{pmatrix}
-\dot{q} \\ \ddot{q}
-\end{pmatrix} = f(q,u) = \begin{cases} q \\ \text{robot\_acceleration}
+\dot{q} \\ 
+\ddot{q}
+\end{pmatrix} = f(q,u) = \begin{cases} q \\ \text{acceleration}
 \end{cases}
 $$
