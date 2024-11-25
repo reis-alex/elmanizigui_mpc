@@ -41,15 +41,18 @@ $$
 \dot{q} \\ 
 \ddot{q}
 \end{pmatrix} = \begin{bmatrix}
-0 & 1 \\ 0 & 0
+0 & 1 \\ 
+0 & 0
 \end{bmatrix}\begin{pmatrix}
 q\\ 
 \dot{q}
 \end{pmatrix} +
  \begin{bmatrix}
-0 \\ I
+0 \\ 
+I
  \end{bmatrix}\tau + \begin{pmatrix}
-0 \\ \text{robotacceleration}
+0 \\
+\text{robotacceleration}
  \end{pmatrix}
 \end{equation}
 $$
