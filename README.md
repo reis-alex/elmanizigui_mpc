@@ -9,7 +9,7 @@ The following explains the code ```el_manizigui_MPC_data_build```:
 
 ## Defining the model
 
-```
+```matlab
 clear all; close all; clc;
 import casadi.*
 
@@ -31,4 +31,14 @@ robot_path = fullfile(pwd, 'elmanizigui2.urdf');
 robot = importrobot(robot_path);
 robot.DataFormat = 'row';
 robot_acceleration = urdf2casadi.Dynamics.symbolicForwardDynamics(robot_path,0);
-```matlab
+```
+
+The code above defines the corresponding states for the robot ($i=1,\dots,4)$: ```q_i``` are the angular positions, while ```qd_i``` are the angular velocities. The acceleration, $\ddot{q}$ is obtained through the function ``` urdf2casadi.Dynamics.symbolicForwardDynamics``` and then passed to ```robot_acceleration```. The idea is then to build a model as an integrator:
+
+&
+\begin{equation}
+\begin{pmatrix}
+\dot{q} \\ \ddot{q}
+\end{pmatrix} = f(q,u) = \begin{cases} q \\ \text{robot_acceleration}
+\end{cases}
+&
