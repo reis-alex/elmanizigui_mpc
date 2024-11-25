@@ -110,22 +110,70 @@ opt.solver = 'ipopt';
 [solver,args_mpc] = build_mpc(opt);
 ```
 
-Now, we use the experimental data to generate the reference trajectory. The sampling of each trajectory is $2kHz$ (period of $0.0005$s), which is too fast. I re-sample this data to $10Hz$ (period of $0.1$s) and discard the initial 500 elements (which are useless). The variable ```qtarget``` gathers all the references for $q$.
+Now, we use the experimental data (either ```Repetition.mat``` or ```Rotation.mat```, uncomment one of them) to generate the reference trajectory. Each trajectory is sampled at $2kHz$ (period of $0.0005$s), which is too fast. I re-sample this data to $10Hz$ (period of $0.1$s) and discard the initial elements (which are useless). The variable ``target `` gathers all the references for $q$.
 
 ```matlab
 %% Get realistic references
 % load('RepetitionData.mat')
-load('RotationData.mat')
 
+% EFE = EFE(1:0.1/0.0005:end);
+% WFE = WFE(1:0.1/0.0005:end);
+% WPS = WPS(1:0.1/0.0005:end);
+% WRU = WRU(1:0.1/0.0005:end);
+% 
+% EFE = EFE(500:end);
+% WFE = WFE(500:end);
+% WPS = WPS(500:end);
+% WRU = WRU(500:end);
+% 
+% qtarget = deg2rad([EFE;WPS;WRU;WFE]);
+
+load('RotationData.mat')
 EFE = EFE(1:0.1/0.0005:end);
 WFE = WFE(1:0.1/0.0005:end);
 WPS = WPS(1:0.1/0.0005:end);
 WRU = WRU(1:0.1/0.0005:end);
 
-EFE = EFE(500:end);
-WFE = WFE(500:end);
-WPS = WPS(500:end);
-WRU = WRU(500:end);
+EFE = EFE(50:end);
+WFE = WFE(50:end);
+WPS = WPS(50:end);
+WRU = WRU(50:end);
 
 qtarget = deg2rad([EFE;WPS;WRU;WFE]);
+```
+
+Finally, the simulation loop is as follows. The variable ```xsimu``` collects the evolution of the states of the robot, ```args_mpc.x0``` gathers the initial conditions for solving the MPC optimization problem, ```args_mpc.p``` gathers all inputs *to the optimization problem* which, in this case, are the state measuments (```xsimu(:,t)```) and the instantaneous reference for $q$ and zero for $\dot{q}$ (```;vertcat(qtarget(:,t),zeros(4,1))```).
+
+```matlab
+%% Simulation loop
+clear i j k
+tmax = length(EFE);
+xsimu(:,1) = vertcat(qtarget(:,1),zeros(4,1));            % xsimu contains the history of states
+u0 = zeros(1,opt.n_controls*opt.N);            % two control inputs for each robot
+X0 = zeros(opt.n_states*(opt.N+1),1);     % initialization of the states decision variables
+
+% Start MPC
+u = [];
+args_mpc.x0 = [X0;u0']; 
+    
+for t = 1:tmax
+
+    % set the values of the parameters vector
+    args_mpc.p = [xsimu(:,t);vertcat(qtarget(:,t),zeros(4,1))];                                              
+    target_q(:,t) = qtarget(:,t);
+    
+    % solve optimization problem
+    tic
+    sol = solver('x0', args_mpc.x0, 'lbx', args_mpc.lbx, 'ubx', args_mpc.ubx,'lbg', args_mpc.lbg, 'ubg', args_mpc.ubg,'p',args_mpc.p);
+    tsol(t) = toc;
+    
+    % get control sequence from MPC
+    aux = full(sol.x(opt.n_states*(opt.N)+opt.n_states+1:opt.n_states*(opt.N+1)+opt.N*opt.n_controls))';
+    u(:,t) = aux(:,1:opt.n_controls)';
+    aux2 = robotacceleration(xsimu([1:4],t),xsimu(5:8,t),[0 0 -10],[u(:,t)]);
+    xsimu(:,t+1) = xsimu(:,t) + opt.dt*[xsimu([5:8],t); aux2.full()];
+
+    args_mpc.x0 = full(sol.x);
+    t
+end
 ```
