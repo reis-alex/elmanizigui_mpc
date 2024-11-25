@@ -18,14 +18,14 @@ torque4 = SX.sym('torque4');
 robot_path = fullfile(pwd, 'elmanizigui2.urdf');
 robot = importrobot(robot_path);
 robot.DataFormat = 'row';
-robot_acceleration = urdf2casadi.Dynamics.symbolicForwardDynamics(robot_path,0);
+robotacceleration = urdf2casadi.Dynamics.symbolicForwardDynamics(robot_path,0);
 
 %%
 opt. N = 50;  
 opt.dt = 0.1;
 opt.n_controls  = 4;
 opt.n_states    = 8;
-opt.model.function = [[qd1;qd2;qd3;qd4]; robot_acceleration([q1;q2;q3;q4],[qd1;qd2;qd3;qd4],[0 0 -10],[torque1;torque2;torque3;torque4])];
+opt.model.function = [[qd1;qd2;qd3;qd4]; robotacceleration([q1;q2;q3;q4],[qd1;qd2;qd3;qd4],[0 0 -10],[torque1;torque2;torque3;torque4])];
 opt.model.states   =  [q1;q2;q3;q4;qd1;qd2;qd3;qd4];
 opt.model.controls = [torque1;torque2;torque3;torque4];
 opt.continuous_model.integration = 'euler';
@@ -43,7 +43,7 @@ opt.costs.stage.function = @(x,u,varargin) (x-varargin{1})'*Q*(x-varargin{1}) + 
                                            (u)'*R*(u);
                                        
 % control and state constraints
-xbound = 50;
+xbound = 20;
 opt.constraints.states.upper  = xbound*ones(opt.n_states,1);
 opt.constraints.states.lower  = -xbound*ones(opt.n_states,1);
 opt.constraints.control.upper = 50*ones(4,1);
@@ -58,23 +58,33 @@ opt.input.vector = {'Ref'};
 
 % Define the solver and generate it
 opt.solver = 'ipopt';
-tic
 [solver,args_mpc] = build_mpc(opt);
-toc
 
 %% Get realistic references
 % load('RepetitionData.mat')
-load('RotationData.mat')
 
+% EFE = EFE(1:0.1/0.0005:end);
+% WFE = WFE(1:0.1/0.0005:end);
+% WPS = WPS(1:0.1/0.0005:end);
+% WRU = WRU(1:0.1/0.0005:end);
+% 
+% EFE = EFE(500:end);
+% WFE = WFE(500:end);
+% WPS = WPS(500:end);
+% WRU = WRU(500:end);
+% 
+% qtarget = deg2rad([EFE;WPS;WRU;WFE]);
+
+load('RotationData.mat')
 EFE = EFE(1:0.1/0.0005:end);
 WFE = WFE(1:0.1/0.0005:end);
 WPS = WPS(1:0.1/0.0005:end);
 WRU = WRU(1:0.1/0.0005:end);
 
-EFE = EFE(500:end);
-WFE = WFE(500:end);
-WPS = WPS(500:end);
-WRU = WRU(500:end);
+EFE = EFE(50:end);
+WFE = WFE(50:end);
+WPS = WPS(50:end);
+WRU = WRU(50:end);
 
 qtarget = deg2rad([EFE;WPS;WRU;WFE]);
 
@@ -103,7 +113,7 @@ for t = 1:tmax
     % get control sequence from MPC
     aux = full(sol.x(opt.n_states*(opt.N)+opt.n_states+1:opt.n_states*(opt.N+1)+opt.N*opt.n_controls))';
     u(:,t) = aux(:,1:opt.n_controls)';
-    aux2 = robot_acceleration(xsimu([1:4],t),xsimu(5:8,t),[0 0 -10],[u(:,t)]);
+    aux2 = robotacceleration(xsimu([1:4],t),xsimu(5:8,t),[0 0 -10],[u(:,t)]);
     xsimu(:,t+1) = xsimu(:,t) + opt.dt*[xsimu([5:8],t); aux2.full()];
 
     args_mpc.x0 = full(sol.x);
