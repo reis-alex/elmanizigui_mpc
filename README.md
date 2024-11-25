@@ -142,7 +142,7 @@ WRU = WRU(50:end);
 qtarget = deg2rad([EFE;WPS;WRU;WFE]);
 ```
 
-Finally, the simulation loop is as follows. The variable ```xsimu``` collects the evolution of the states of the robot, ```args_mpc.x0``` gathers the initial conditions for solving the MPC optimization problem, ```args_mpc.p``` gathers all inputs *to the optimization problem* which, in this case, are the state measuments (```xsimu(:,t)```) and the instantaneous reference for $q$ and zero for $\dot{q}$ (```;vertcat(qtarget(:,t),zeros(4,1))```).
+Finally, the simulation loop is as follows. The variable ```xsimu``` collects the evolution of the states of the robot, ```args_mpc.x0``` gathers the initial conditions for solving the MPC optimization problem, ```args_mpc.p``` gathers all inputs *to the optimization problem* which, in this case, are the state measuments (```xsimu(:,t)```) and the instantaneous reference for $q$ and zero for $\dot{q}$ (```vertcat(qtarget(:,t),zeros(4,1))```).
 
 ```matlab
 %% Simulation loop
