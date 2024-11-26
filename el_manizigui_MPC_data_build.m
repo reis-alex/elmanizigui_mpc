@@ -16,8 +16,8 @@ torque3 = SX.sym('torque3');
 torque4 = SX.sym('torque4');
 
 robot_path = fullfile(pwd, 'elmanizigui2.urdf');
-robot = importrobot(robot_path);
-robot.DataFormat = 'row';
+% robot = importrobot(robot_path);
+% robot.DataFormat = 'row';
 robotacceleration = urdf2casadi.Dynamics.symbolicForwardDynamics(robot_path,0);
 
 %%
@@ -121,13 +121,13 @@ for t = 1:tmax
 end
 
 %% 
-close all
-for k = 1:length(xsimu)
-    show(robot,xsimu(1:4,k)');
-    axis auto
-    view([0 90 90])
-    drawnow
-end
+% close all
+% for k = 1:length(xsimu)
+%     show(robot,xsimu(1:4,k)');
+%     axis auto
+%     view([0 90 90])
+%     drawnow
+% end
 
 figure
 subplot(221)
