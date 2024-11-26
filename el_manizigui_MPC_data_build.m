@@ -46,8 +46,8 @@ opt.costs.stage.function = @(x,u,varargin) (x-varargin{1})'*Q*(x-varargin{1}) + 
 xbound = 20;
 opt.constraints.states.upper  = xbound*ones(opt.n_states,1);
 opt.constraints.states.lower  = -xbound*ones(opt.n_states,1);
-opt.constraints.control.upper = 50*ones(4,1);
-opt.constraints.control.lower = -50*ones(4,1);
+opt.constraints.control.upper = 1.5*ones(4,1);
+opt.constraints.control.lower = -1.5*ones(4,1);
 opt.constraints.general.function{1} = @(x,varargin) x(:,end)-varargin{:};
 opt.constraints.general.parameters = {'Ref'};
 opt.constraints.general.type{1} = 'equality';
@@ -140,12 +140,10 @@ plot(WPS,'-b')
 hold on
 plot(rad2deg(xsimu(2,:)),'--r')
 
-
 subplot(223)
 plot(WRU,'-b')
 hold on
 plot(rad2deg(xsimu(3,:)),'--r')
-
 
 subplot(224)
 plot(WFE,'-b')
