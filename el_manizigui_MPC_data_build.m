@@ -21,7 +21,7 @@ robot_path = fullfile(pwd, 'elmanizigui2.urdf');
 robotacceleration = urdf2casadi.Dynamics.symbolicForwardDynamics(robot_path,0);
 
 %%
-opt. N = 50;  
+opt. N = 20;  
 opt.dt = 0.1;
 opt.n_controls  = 4;
 opt.n_states    = 8;
