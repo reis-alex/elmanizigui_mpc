@@ -395,7 +395,7 @@ switch opt.solver
         opts.print_time             = 0;
         opts.ipopt.acceptable_tol   = 1e-8;
         opts.ipopt.acceptable_obj_change_tol = 1e-8;
-        solver = nlpsol('solver', 'ipopt',OPC,opts);
+        solver = nlpsol('solver','ipopt',OPC,opts);
     case 'qpoases'
         options.terminationTolerance = 1e-8;
         options.boundTolerance = 1e-8;
