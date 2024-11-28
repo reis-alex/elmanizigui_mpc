@@ -31,8 +31,8 @@ opt.model.controls = [torque1;torque2;torque3;torque4];
 opt.continuous_model.integration = 'euler';
 
 % Define parameters
-opt.parameters.name = {'Ref','nul'};
-opt.parameters.dim = [opt.n_states, 1; 1 1];
+opt.parameters.name = {'Ref'};
+opt.parameters.dim = [opt.n_states, 1];
 
 % Define costs
 Q = blkdiag(1e10*eye(opt.n_states/2),eye(opt.n_states/2));
