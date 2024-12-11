@@ -1,4 +1,4 @@
-clear all;  clc;
+clear all; close all; clc;
 import casadi.*
 
 % define state variables
@@ -31,16 +31,20 @@ opt.model.controls = [torque1;torque2;torque3;torque4];
 opt.continuous_model.integration = 'euler';
 
 % Define parameters
-opt.parameters.name = {'Ref'};
-opt.parameters.dim = [opt.n_states, 1];
+for i = 1:opt.N
+    opt.parameters.name{i} = ['Ref' int2str(i)];
+end
+opt.parameters.dim = repmat([opt.n_states, 1;],20,1);
 
 % Define costs
-Q = blkdiag(1e10*eye(opt.n_states/2),eye(opt.n_states/2));
+Q = blkdiag(1e10*eye(opt.n_states/2),0.1*eye(opt.n_states/2));
 R = 0.001*eye(opt.n_controls);
 
-opt.costs.stage.parameters = {'Ref'};
-opt.costs.stage.function = @(x,u,varargin) (x-varargin{1})'*Q*(x-varargin{1}) + ...
-                                           (u)'*R*(u);
+opt.costs.stage.parameters = opt.parameters.name;
+opt.costs.stage.sort_parameter.fixed = [];
+opt.costs.stage.sort_parameter.var = 1:20;
+opt.costs.stage.function = @(x,u,varargin)  (x-varargin{:})'*Q*(x-varargin{:});% ...
+%                                             + u'*R*u;
                                        
 % control and state constraints
 xbound = 20;
@@ -48,13 +52,24 @@ opt.constraints.states.upper  = xbound*ones(opt.n_states,1);
 opt.constraints.states.lower  = -xbound*ones(opt.n_states,1);
 opt.constraints.control.upper = 1.5*ones(4,1);
 opt.constraints.control.lower = -1.5*ones(4,1);
-opt.constraints.general.function{1} = @(x,varargin) x(:,end)-varargin{:};
-opt.constraints.general.parameters = {'Ref'};
-opt.constraints.general.type{1} = 'equality';
-opt.constraints.general.elements{1} = 'end';
+
+% % this constraint is only for x(N)
+% opt.constraints.general.function{1} = @(x,varargin) x(:,end)-varargin{:};
+% opt.constraints.general.parameters = {'Ref'};
+% opt.constraints.general.type{1} = 'equality';
+% opt.constraints.general.elements{1} = 'end';
+
+% this constraint is for x(N) and x(N-1)
+
+% opt.constraints.general.function{1} = @(x,varargin) [x(:,end-6)-varargin{1}; x(:,end-5)-varargin{2}; ...
+%                                                      x(:,end-4)-varargin{3}; x(:,end-3)-varargin{4};
+%                                                      x(:,end-2)-varargin{5}; x(:,end-1)-varargin{6}];
+% opt.constraints.general.parameters = opt.parameters.name;
+% opt.constraints.general.type{1} = 'equality';
+% opt.constraints.general.elements{1} = 'all';
 
 % Define inputs to optimization
-opt.input.vector = {'Ref'};
+opt.input.vector = opt.parameters.name;
 
 % Define the solver and generate it
 opt.solver = 'ipopt';
@@ -99,10 +114,10 @@ X0 = zeros(opt.n_states*(opt.N+1),1);     % initialization of the states decisio
 u = [];
 args_mpc.x0 = [X0;u0']; 
     
-for t = 1:tmax
+for t = 1:tmax-20
 
     % set the values of the parameters vector
-    args_mpc.p = [xsimu(:,t);vertcat(qtarget(:,t),zeros(4,1))];                                              
+    args_mpc.p = [xsimu(:,t);reshape(vertcat(qtarget(:,t:t+19),zeros(4,20)),8*20,1)];                                              
     target_q(:,t) = qtarget(:,t);
     
     % solve optimization problem
