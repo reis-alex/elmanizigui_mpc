@@ -1,6 +1,6 @@
 clear all; close all; clc;
 import casadi.*
-
+addpath(genpath([pwd '\urdf2casadi-matlab-master']));
 % define state variables
 q1  = SX.sym('q1');
 qd1 = SX.sym('qd1');
