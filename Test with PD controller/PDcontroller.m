@@ -57,6 +57,8 @@ classdef PDcontroller < matlab.System & matlab.system.mixin.Propagates
             obj.Kp = v1;
             obj.Kd = v2;
         end
+        
+        % Important: communication between setImpl and stepImpl are made uniquely through the variable obj
 
         function u = stepImpl(obj,x,ref) 
             u = -obj.Kp*(x(1)-ref(1)) - obj.Kd*(x(2)-ref(2));
