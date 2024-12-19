@@ -53,7 +53,7 @@ classdef PDcontroller < matlab.System & matlab.system.mixin.Propagates
         function setupImpl(obj,~,~)
             % Implement tasks that need to be performed only once, 
             % such as pre-computed constants.
-            [v1,v2] = getgains(); % if this does not work, just set values for obj.Kp and obj.Kd
+            [v1,v2] = getgains();
             obj.Kp = v1;
             obj.Kd = v2;
         end
