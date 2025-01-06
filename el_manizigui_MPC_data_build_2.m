@@ -105,7 +105,6 @@ qtarget = deg2rad([EFE;WPS;WRU;WFE]);
 
 %% Simulation loop
 clear i j k
-tmax = length(EFE);
 xsimu(:,1) = vertcat(qtarget(:,1),zeros(4,1));            % xsimu contains the history of states
 u0 = zeros(1,opt.n_controls*opt.N);            % two control inputs for each robot
 X0 = zeros(opt.n_states*(opt.N+1),1);     % initialization of the states decision variables
@@ -114,7 +113,7 @@ X0 = zeros(opt.n_states*(opt.N+1),1);     % initialization of the states decisio
 u = [];
 args_mpc.x0 = [X0;u0']; 
     
-for t = 1:tmax-20
+for t = 1:length(EFE)-20
 
     % set the values of the parameters vector
     args_mpc.p = [xsimu(:,t);reshape(vertcat(qtarget(:,t:t+19),zeros(4,20)),8*20,1)];                                              
