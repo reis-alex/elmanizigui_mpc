@@ -14,7 +14,7 @@ epochs = 1000;       % Number of epochs
 % Generate Toy Dataset
 rng(42); % For reproducibility
 X = rand(input_dim, 100); % 100 samples, 2 features
-Y = sin(X(1,:));%sum(X, 1) > 1;        % Output is 1 if sum of inputs > 1
+Y = X(1,:).*sin(X(1,:));%sum(X, 1) > 1;        % Output is 1 if sum of inputs > 1
 % Y = double(Y);            % Convert logical to double
 
 % Symbolic Variables
