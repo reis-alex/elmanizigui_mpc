@@ -27,7 +27,7 @@ ref8 = SX.sym('ref8');
 ref9 = SX.sym('ref9');
 ref10 = SX.sym('ref10');
 ref11 = SX.sym('ref11');
-ref12 = SX.sym('ref12');
+ref12 = SX.sym('ref12'); 
 
 % robot_path = 'C:\Users\Alex Reis\Desktop\Exoskeleton control\models\urdf\elmanizigui2.urdf';
 robot_path = 'C:\Users\Alex Reis\Desktop\Exoskeleton control\models\urdf\elmanizigui2.urdf';

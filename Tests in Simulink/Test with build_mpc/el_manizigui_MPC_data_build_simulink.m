@@ -111,26 +111,22 @@ X0 = zeros(opt.n_states*(opt.N+1),1);     % initialization of the states decisio
 
 % Start MPC
 u = [];
-args_mpc.x0 = [X0;u0']; 
-    
+init_var = [X0;u0']; 
+
 for t = 1:length(EFE)-20
 
     % set the values of the parameters vector
-    args_mpc.p = [xsimu(:,t);reshape(vertcat(qtarget(:,t:t+19),zeros(4,20)),8*20,1)];                                              
-    target_q(:,t) = qtarget(:,t);
-    
-    % solve optimization problem
-    tic
-    sol = solver('x0', args_mpc.x0, 'lbx', args_mpc.lbx, 'ubx', args_mpc.ubx,'lbg', args_mpc.lbg, 'ubg', args_mpc.ubg,'p',args_mpc.p);
-    tsol(t) = toc;
-    
+    mpc_input       = [xsimu(:,t);reshape(vertcat(qtarget(:,t:t+19),zeros(4,20)),8*20,1)];                                              
+    target_q(:,t)   = qtarget(:,t);
+       
     % get control sequence from MPC
-    aux = full(sol.x(opt.n_states*(opt.N)+opt.n_states+1:opt.n_states*(opt.N+1)+opt.N*opt.n_controls))';
+    sim_mpc = sim('mpc_block');
+    aux = mpc_solution.Data(opt.n_states*(opt.N)+opt.n_states+1:opt.n_states*(opt.N+1)+opt.N*opt.n_controls);
     u(:,t) = aux(:,1:opt.n_controls)';
     aux2 = robotacceleration(xsimu([1:4],t),xsimu(5:8,t),[0 0 -10],[u(:,t)]);
     xsimu(:,t+1) = xsimu(:,t) + opt.dt*[xsimu([5:8],t); aux2.full()];
 
-    args_mpc.x0 = full(sol.x);
+    init_var = mpc_solution.Data(:,:,end);
     t
 end
 
