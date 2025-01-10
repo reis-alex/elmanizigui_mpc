@@ -4,31 +4,45 @@ import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Generate Dataset for f(x) = x^2
 np.random.seed(42)
-#x_data = np.random.uniform(0, 2*np.pi, 100).astype(np.float32)  # Random input points
-x_data = np.linspace(0,2*np.pi,2000).astype(np.float32)
-y_data = (np.sin(x_data)*x_data**2).astype(np.float32)                 # True function output
+
+#x_data1 = np.linspace(-0,10,2000).astype(np.float32)
+#x_data2 = np.linspace(-10,0,2000).astype(np.float32)
+x_data1 = np.random.uniform(-10, 10, 100).astype(np.float32)  # Random values for x1
+x_data2 = np.random.uniform(-10, 10, 100).astype(np.float32)
+y_data = (x_data1+x_data2).astype(np.float32)                 # True function output
+
 
 # Convert to PyTorch tensors
-x_train = torch.tensor(x_data).unsqueeze(1)  # Shape: (100, 1)
-y_train = torch.tensor(y_data).unsqueeze(1)  # Shape: (100, 1)
+x_train = torch.tensor(np.column_stack((x_data1,x_data2)))  
+y_train = torch.tensor(y_data).unsqueeze(1)
 
 # Define Neural Network Model
 class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
-        self.hidden = nn.Linear(1, 5)  # Input layer to hidden layer
-        self.relu = nn.ReLU()           # ReLU activation
-        self.sigmoid = nn.Sigmoid();
-        self.output = nn.Linear(5, 1)  # Hidden layer to output layer
+        #self.flatten = nn.Flatten()
+        self.linear_relu_stack = nn.Sequential(
+            nn.Linear(2, 5),
+            nn.ReLU(),
+            nn.Linear(5, 5),
+            nn.ReLU(),
+            nn.Linear(5, 1),
+        )
+        #self.hidden = nn.Linear(2, 5)  # Input layer to hidden layer
+        #self.relu = nn.ReLU()           # ReLU activation
+        #self.sigmoid = nn.Sigmoid();
+        #self.output = nn.Linear(5, 1)  # Hidden layer to output layer
 
     def forward(self, x):
-        x = self.hidden(x)
-        x = self.sigmoid(x)
-        x = self.relu(x)
-        x = self.output(x)
+        #x = self.flatten(x)
+        x = self.linear_relu_stack(x)
         return x
+        #x = self.hidden(x)
+        #x = self.sigmoid(x)
+        #x = self.relu(x)
+        #x = self.output(x)
+        #return x
 
 # Instantiate the model, define loss and optimizer
 model = NeuralNetwork()
@@ -57,13 +71,15 @@ for epoch in range(epochs):
         print(f'Epoch [{epoch + 1}/{epochs}], Loss: {loss.item():.4f}')
 
 # Test the model
-x_test = torch.linspace(0, 2*np.pi, 2000).unsqueeze(1)  # Test points
+x_test = torch.tensor(np.column_stack((torch.linspace(-20, 20, 2000),torch.linspace(-20, 20, 2000))))  # Test points
 y_test_pred = model(x_test).detach().numpy()      # Predictions
+y_test_real = (x_test[0:,0].detach().numpy()+x_test[0:,1].detach().numpy()).astype(np.float32) 
 
 # Plot Results
 plt.figure(figsize=(8, 6))
-plt.scatter(x_data, y_data, label='True Function (x^2)', color='blue')
-plt.plot(x_test.numpy(), y_test_pred, label='Neural Network Prediction', color='red')
+plt.scatter(x_data1, y_data, label='True Function (x^2)', color='blue')
+plt.plot(x_test[0:,1], y_test_pred, label='Neural Network Prediction', color='red')
+plt.plot(x_test[0:,1], y_test_real, label='Neural Network Prediction', color='green')
 plt.xlabel('x')
 plt.ylabel('f(x)')
 plt.title('Neural Network Approximation of f(x) = x^2')
